@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
+using System.Net;
+using Newtonsoft.Json;
 
 namespace LivestreamerUI
 {
@@ -21,20 +23,44 @@ namespace LivestreamerUI
     /// </summary>
     public partial class MainWindow : Window
     {
+        private String channel;
+        private readonly String path;
+        private TwitchFollowing following;
+        private WebClient webClient;
+
         public MainWindow()
         {
             InitializeComponent();
+            
+            channel = StreamInputBox.Text;
+            path = LivestreamerPathBox.Text;
+            webClient = new WebClient();
+            
+
+            StreamInputBox.Focus();
+        }
+
+        public void test()
+        {
+            var url = "https://api.twitch.tv/kraken/users/fallenadvocate/follows/channels";
+            string json = webClient.DownloadString(url);
+
+            TwitchFollowing twitch = JsonConvert.DeserializeObject<TwitchFollowing>(json);
         }
         
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var channel = StreamInputBox.Text;
-            var path = LivestreamerPathBox.Text;
+            channel = StreamInputBox.Text;
 
-            if(button != null)
+            OpenLivestreamer();
+        }
+
+        private void StreamInputBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter)
             {
-                OpenLivestreamer(path, channel);
+                Submit_Click(this, new RoutedEventArgs());
             }
         }
 
@@ -42,13 +68,8 @@ namespace LivestreamerUI
         {
             return "livestreamer.exe twitch.tv/" + channel + " source";
         }
-
-        private string BuildString(string channel, string quality)
-        {
-            return "livestreamer.exe twitch.tv/" + channel + " " + quality;
-        }
-
-        private void OpenLivestreamer(string path, string channel)
+      
+        private void OpenLivestreamer()
         {
             Process p = new Process();
             p.StartInfo.FileName = "cmd.exe";
@@ -58,8 +79,7 @@ namespace LivestreamerUI
             p.StartInfo.RedirectStandardInput = true;
             p.StartInfo.CreateNoWindow = true;
             p.Start();
-
-
+            
             p.StandardInput.WriteLine(BuildString(channel));
         }
     }
