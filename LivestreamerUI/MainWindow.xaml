@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LivestreamerUI"
         mc:Ignorable="d"
-        Title="LivestreamerGUI" Height="100" Width="350" Background="{DynamicResource {x:Static SystemColors.GradientActiveCaptionBrushKey}}" Visibility="Visible" BorderThickness="0">
+        Title="LivestreamerGUI" Height="500" Width="550" Background="{DynamicResource {x:Static SystemColors.GradientActiveCaptionBrushKey}}" Visibility="Visible" BorderThickness="0">
   
     
     <Grid>
@@ -16,8 +16,9 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Label Content="Livestreamer Path:" HorizontalAlignment="Right" VerticalAlignment="Center" FontFamily="Arial"/>
@@ -27,6 +28,6 @@
         <TextBox x:Name="StreamInputBox" KeyDown="StreamInputBox_KeyDown" Width="100" Height="22" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left"/>
         <Button x:Name="SubmitButton" Content="Submit" Click="Submit_Click" Height="22" Width="86" HorizontalAlignment="Left" Grid.Row="1" Grid.Column="2"/>
 
-        
+        <TextBlock x:Name="FollowingTextBox" Width="500" Height="380" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2"/>
     </Grid>
 </Window>

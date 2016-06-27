@@ -1,17 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Diagnostics;
 using System.Net;
 using Newtonsoft.Json;
@@ -25,8 +15,8 @@ namespace LivestreamerUI
     {
         private String channel;
         private readonly String path;
-        private TwitchFollowing following;
         private WebClient webClient;
+        private List<TwitchFollowing> twitchFollowing;
 
         public MainWindow()
         {
@@ -35,25 +25,50 @@ namespace LivestreamerUI
             channel = StreamInputBox.Text;
             path = LivestreamerPathBox.Text;
             webClient = new WebClient();
-            
+
+            twitchFollowing = new List<TwitchFollowing>();
 
             StreamInputBox.Focus();
         }
 
-        public void test()
+        public void GetFollowing()
         {
             var url = "https://api.twitch.tv/kraken/users/fallenadvocate/follows/channels";
             string json = webClient.DownloadString(url);
+            TwitchFollowing followers = new TwitchFollowing();
+            followers = JsonConvert.DeserializeObject<TwitchFollowing>(json);
+            
+            // can only grab 25 channels you're following at a time, this loops until all are grabbed
+            do
+            {
+                twitchFollowing.Add(followers);
+                json = webClient.DownloadString(followers._links.next);
+                followers = JsonConvert.DeserializeObject<TwitchFollowing>(json);
+            }
+            while (followers.follows.Count != 0);
 
-            TwitchFollowing twitch = JsonConvert.DeserializeObject<TwitchFollowing>(json);
+        }
+
+        public void GetOnline()
+        {
+            foreach (var list in twitchFollowing)
+            {
+                for(int c = 0; c < list.follows.Count; c++)
+                {
+                    FollowingTextBox.Text += list.follows[c].channel.name + " " + list.follows[c].channel.game + "\n";
+                }
+            }
         }
         
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
-            var button = sender as Button;
-            channel = StreamInputBox.Text;
 
-            OpenLivestreamer();
+            GetFollowing();
+            GetOnline();
+            //var button = sender as Button;
+            //channel = StreamInputBox.Text;
+
+            //OpenLivestreamer();
         }
 
         private void StreamInputBox_KeyDown(object sender, KeyEventArgs e)
