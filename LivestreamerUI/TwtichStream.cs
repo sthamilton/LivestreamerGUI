@@ -11,7 +11,6 @@ namespace LivestreamerUI
         {
             public string game { get; set; }
             public string _id { get; set; }
-            
         }
     }
 }

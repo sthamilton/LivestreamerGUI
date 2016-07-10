@@ -59,6 +59,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Data.cs" />
+    <Compile Include="SaveData.cs" />
     <Compile Include="TwitchFollowing.cs" />
     <Compile Include="TwtichStream.cs" />
     <Page Include="MainWindow.xaml">
