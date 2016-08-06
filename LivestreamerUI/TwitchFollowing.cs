@@ -3,6 +3,7 @@ using System.Net;
 
 namespace LivestreamerUI
 {
+
     class TwitchFollowing
     { 
         public List<Follows> follows { get; set; }
@@ -16,9 +17,9 @@ namespace LivestreamerUI
             {
                 public string name { get; set; }
                 public string display_name { get; set; }
+                public string status { get; set; }
                 public string game { get; set; }
                 public string url { get; set; }
-                public string _id { get; set; }
             }
         }
 

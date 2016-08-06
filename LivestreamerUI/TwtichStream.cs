@@ -9,9 +9,9 @@ namespace LivestreamerUI
 
         public class Stream
         {
-            public string game { get; set; }
-            public string _id { get; set; }
+            public string viewers { get; set; }
         }
+       
     }
 }
  

@@ -30,8 +30,6 @@ namespace LivestreamerUI
         {
             InitializeComponent();
             
-            channel = StreamInputBox.Text;
-            path = LivestreamerPathBox.Text;
             webClient = new WebClient();
             twitchFollowing = new List<TwitchFollowing>();
             onlineStreams = new List<string>();
@@ -122,7 +120,7 @@ namespace LivestreamerUI
 
                     if (streamData.stream != null)
                     { 
-                        onlineStreams.Add(list.follows[c].channel.display_name + " - " + list.follows[c].channel.game + " \r\n ");
+                        onlineStreams.Add(list.follows[c].channel.display_name + " - " + list.follows[c].channel.game + " " + list.follows[c].channel.status + " \r\n ");
                     }
 
                     worker.ReportProgress(80, null);
@@ -141,6 +139,7 @@ namespace LivestreamerUI
         
         private void View_Click(object sender, RoutedEventArgs e)
         {
+            channel = StreamInputBox.Text;
             OpenLivestreamer();
         }
 
@@ -148,6 +147,8 @@ namespace LivestreamerUI
         {
             if (!worker.IsBusy)
             {
+                LoadXMLData();
+
                 FollowingTextBox.SelectAll();
                 FollowingTextBox.Selection.Text = "";
 
@@ -155,23 +156,19 @@ namespace LivestreamerUI
 
                 ShowFollowing();
             }
+            else
+            {
+                MessageBox.Show("Retry");
+            }
         }
 
-        private void Save_Click(object sender, RoutedEventArgs e)
+        private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                Data data = new Data();
-                data.LivestreamerPath = LivestreamerPathBox.Text;
-                data.Username = UsernameBox.Text;
-                SaveData.Save(data, "data.xml");
-            }
-            catch(Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
+            SettingsWindow settings = new SettingsWindow();
 
+            settings.Show();
+        }
+        
         private void StreamInputBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -180,7 +177,7 @@ namespace LivestreamerUI
             }
         }
 
-        private string BuildString(string channel)
+        private string BuildString()
         {
             return "livestreamer.exe twitch.tv/" + channel + " source";
         }
@@ -194,9 +191,7 @@ namespace LivestreamerUI
                     XmlSerializer xs = new XmlSerializer(typeof(Data));
                     FileStream read = new FileStream("data.xml", FileMode.Open, FileAccess.Read, FileShare.Read);
                     Data data = (Data)xs.Deserialize(read);
-
-                    LivestreamerPathBox.Text = data.LivestreamerPath;
-                    UsernameBox.Text = data.Username;
+                    
                     username = data.Username;
                 }
             }));
@@ -209,16 +204,18 @@ namespace LivestreamerUI
       
         private void OpenLivestreamer()
         {
+            Thread.Sleep(250);
+
             Process p = new Process();
             p.StartInfo.FileName = "cmd.exe";
             p.StartInfo.WorkingDirectory = path;
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.RedirectStandardOutput = true;
             p.StartInfo.RedirectStandardInput = true;
-            p.StartInfo.CreateNoWindow = true;
+            p.StartInfo.CreateNoWindow = false;
             p.Start();
             
-            p.StandardInput.WriteLine(BuildString(StreamInputBox.Text));
+            p.StandardInput.WriteLine(BuildString());
         }
     }
 }
