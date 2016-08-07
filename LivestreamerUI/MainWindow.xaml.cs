@@ -10,6 +10,7 @@ using System.IO;
 using System.Xml.Serialization;
 using System.Threading;
 using System.Windows.Threading;
+using System.Linq;
 
 namespace LivestreamerUI
 {
@@ -23,7 +24,8 @@ namespace LivestreamerUI
         private WebClient webClient;
         private List<TwitchFollowing> twitchFollowing;
         private readonly BackgroundWorker worker;
-        private List<string> onlineStreams;
+        private List<List<string>> onlineStreams;
+        private List<TwitchFollowing> online;
         private string username;
 
         public MainWindow()
@@ -32,7 +34,8 @@ namespace LivestreamerUI
             
             webClient = new WebClient();
             twitchFollowing = new List<TwitchFollowing>();
-            onlineStreams = new List<string>();
+            onlineStreams = new List<List<string>>();
+            online = new List<TwitchFollowing>();
 
             worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
@@ -52,6 +55,20 @@ namespace LivestreamerUI
 
         private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            List<List<string>> sorted = new List<List<string>>();
+            var list = onlineStreams.Select(x => x).ToList();
+            
+        
+            foreach(var item in list)
+            {
+                //do
+                //{
+
+                //}
+            }
+
+            //onlineStreams = onlineStreams.OrderByDescending(a => a.Max(x => a.ElementAt[x][3])).ToList();
+
             WriteStream(onlineStreams);
         }
 
@@ -68,8 +85,8 @@ namespace LivestreamerUI
 
         public void GetFollowing()
         {
+            Thread.Sleep(200);
             LoadXMLData();
-            Thread.Sleep(500);
             
             //if a username is entered, access their followers and add their data to twitchFollowing
             if (username != null) {
@@ -119,8 +136,11 @@ namespace LivestreamerUI
                     streamData = JsonConvert.DeserializeObject<TwitchStream>(json);
 
                     if (streamData.stream != null)
-                    { 
-                        onlineStreams.Add(list.follows[c].channel.display_name + " - " + list.follows[c].channel.game + " " + list.follows[c].channel.status + " \r\n ");
+                    {
+                        //onlineStreams.Add(list.follows[c].channel.display_name + " - " + list.follows[c].channel.game + " " + list.follows[c].channel.status + " " + streamData.stream.viewers + "" + " \r\n ");
+                        List<string> l = new List<string>() { list.follows[c].channel.display_name, list.follows[c].channel.game, list.follows[c].channel.status, streamData.stream.viewers };
+                        
+                        onlineStreams.Add(l);
                     }
 
                     worker.ReportProgress(80, null);
@@ -128,12 +148,16 @@ namespace LivestreamerUI
             }
         }
 
-        public void WriteStream(List<string> streams)
+        public void WriteStream(List<List<string>> streams)
         {
-            FollowingTextBox.Document.Blocks.Clear(); 
-            foreach(var stream in streams)
-            {
-                FollowingTextBox.AppendText(stream);
+            FollowingListBox.Items.Clear();
+
+            foreach (List<string> list in streams) {
+                foreach (string s in list)
+                {
+                    FollowingListBox.Items.Add(s);
+                }
+                FollowingListBox.Items.Add("\r\n");
             }
         }
         
@@ -148,12 +172,8 @@ namespace LivestreamerUI
             if (!worker.IsBusy)
             {
                 LoadXMLData();
-
-                FollowingTextBox.SelectAll();
-                FollowingTextBox.Selection.Text = "";
-
+                FollowingListBox.Items.Clear();
                 onlineStreams.Clear();
-
                 ShowFollowing();
             }
             else
@@ -204,7 +224,7 @@ namespace LivestreamerUI
       
         private void OpenLivestreamer()
         {
-            Thread.Sleep(250);
+            Thread.Sleep(100); //without this, sometimes clicking view will randomly not work
 
             Process p = new Process();
             p.StartInfo.FileName = "cmd.exe";
@@ -212,7 +232,7 @@ namespace LivestreamerUI
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.RedirectStandardOutput = true;
             p.StartInfo.RedirectStandardInput = true;
-            p.StartInfo.CreateNoWindow = false;
+            p.StartInfo.CreateNoWindow = true;
             p.Start();
             
             p.StandardInput.WriteLine(BuildString());

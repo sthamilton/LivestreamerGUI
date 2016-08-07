@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LivestreamerUI"
         mc:Ignorable="d"
-        Title="LivestreamerGUI" Loaded="LivestreamerGui_Load" Height="600" Width="550" Background="SlateGray" Visibility="Visible" BorderThickness="0">
+        Title="LivestreamerGUI" Loaded="LivestreamerGui_Load" Height="600" Width="550" Background="#646869" Visibility="Visible" BorderThickness="0">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -16,7 +16,7 @@
         
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0" Grid.Row="0">
 
-            <Label Content="Streamer:"  HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0" FontFamily="Arial"/>
+            <Label Content="Streamer:"  HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0" FontFamily="Arial" Foreground="White"/>
             <TextBox x:Name="StreamInputBox" KeyDown="StreamInputBox_KeyDown" Width="178" Height="25" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" FontSize="16"/>
             <Button x:Name="ViewButton" Content="View" Click="View_Click" Height="25" Width="75" HorizontalAlignment="Right" Grid.Row="0" Grid.Column="2" />
 
@@ -37,7 +37,8 @@
             <Button x:Name="SettingsButton" Content="Settings" Click="Settings_Click" Height="25" Width="150" HorizontalAlignment="Center" Grid.Row="0" Grid.Column="0" />
             <Button x:Name="RefreshButton" Content="Refresh Streams" Click="Refresh_Click" Height="25" Width="150" HorizontalAlignment="Center" Grid.Row="0" Grid.Column="1" />
 
-            <RichTextBox x:Name="FollowingTextBox" Width="500" Height="470" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="4" Foreground="Black" IsReadOnly="True" Background="LightSlateGray"/>
+            <ListBox x:Name="FollowingListBox" Width="Auto" Height="Auto" MinHeight="480" MaxHeight="1080" ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="4" Background="#303030" Foreground="white"/>
+            
         </Grid>
     </Grid>
 </Window> 

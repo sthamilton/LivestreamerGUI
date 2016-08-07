@@ -20,6 +20,7 @@ namespace LivestreamerUI
                 public string status { get; set; }
                 public string game { get; set; }
                 public string url { get; set; }
+                public string views { get; set; }
             }
         }
 
